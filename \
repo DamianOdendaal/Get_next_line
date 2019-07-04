@@ -6,7 +6,7 @@
 /*   By: dodendaa <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/02 14:00:39 by dodendaa          #+#    #+#             */
-/*   Updated: 2019/07/04 17:38:24 by dodendaa         ###   ########.fr       */
+/*   Updated: 2019/07/04 17:37:55 by dodendaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ static char	*array[1025];
 
 array[5] = "aaaaa\naaa";
 line = "aaaaa";
-array[5] = "aaa";
 array[5] = "aaaaaaaa\naa";
 line = "aaaaaaaaaa";
 array[5] = "aa"
