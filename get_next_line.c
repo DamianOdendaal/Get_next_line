@@ -39,21 +39,40 @@ static int		ft_newls(char **line, char **s)
 	return (1);
 }
 
+static int		ft_bread(const int fd, char **s, char *buff, int *readb)
+{
+	char		*tvar;
+
+	while (*readb > 0)
+	{
+		buff[*readb] = '\0';
+		temp = ft_strjoin(*s, buff);
+		ft_strdel(s);
+		*s = tvar;
+		if (ft_strchr(buff, '\n'))
+			break ;
+		*readb = read(fd, buff, BUFF_SIZE);
+	}
+	return (*readb);
+}
+
 int	get_next_line(const int fd, char **line)
 {
 	static char	*s = NULL;
-	char		*buffer;
+	char		*buff;
 	int			readb;
 
 	if(!line || read(fd, NULL, 0) == -1 )
 		return (-1);
-	readb = read(fd, buffer, BUFF_SIZE);
+	if (readb > 0)
+		ft_bread(fd, &s, buff, &readb);
+	readb = read(fd, buff, BUFF_SIZE);
 	if (ft_strlen(s) == 0)
 	{
 		if (readb == 0)
 			*line = ft_strdup("");
 		return (0);
 	}
-	ft_strdel(&buffer);
+	ft_strdel(&buff);
 	return (ft_newls(line, &s));
 }
