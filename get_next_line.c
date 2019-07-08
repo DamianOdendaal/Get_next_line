@@ -12,29 +12,48 @@
 
 #include "get_next_line.h"
 
-if(fd_arr[fd] == NULL)
-	fd_arr[fd] = ft_strnew(1);
-static void ft_Search_and_replace(char *search, char *replace)
-{
- 	char *buffer[BUFF_SIZE + 1];
-	while (fd_arr[fd] != '\n')
-	{
-		search = ft_strchr(fd_arr[fd], '\n') + 1;
-		temp = ft_memset(fd_arr[fd], '\0', 1);
-		line = ft_strdup(fd_arr[fd]);
-		ft_strdel(&fd_arr[fd]);
-		fd_arr[fd] = ft_strdup(temp);
-		len++;
-	}
-}
-	 if (fd_arr[fd] == '\n')
-		/* line = ft_strsub(buffer, 0, len); */
 
-/* int get_next_line(int fd, char **line) */
-/* { */
-/* 	static char		*str_temp[1025]; */
-/* 	char			buf; */
-/* 	int				ret; */
-/* 	if(!line || read(fd, NULL, 0) == -1 ) */
-/* 		return(-1); */
-/* } */
+static int		ft_newls(char **line, char **s)
+{
+	char		*str;
+	char		*temp;
+	int			len;
+
+	len = 0;
+	str = (char*)*s;
+	while ((str[len] != '\n') && (str[len] != '\0'))
+		len++;
+	if (str[len] == '\n')
+	{
+		*line = ft_strsub(str, str[0],len);
+		temp = ft_strdup(&str[len + 1]);
+		*s = temp;
+		if (s[0] == '\0')
+			ft_strdel(s);
+	}
+	else if (str[len] == '\0')
+	{
+		*line = ft_strdup(str);
+		ft_strdel(s);
+	}
+	return (1);
+}
+
+int	get_next_line(const int fd, char **line)
+{
+	static char	*s = NULL;
+	char		*buffer;
+	int			readb;
+
+	if(!line || read(fd, NULL, 0) == -1 )
+		return (-1);
+	readb = read(fd, buffer, BUFF_SIZE);
+	if (ft_strlen(s) == 0)
+	{
+		if (readb == 0)
+			*line = ft_strdup("");
+		return (0);
+	}
+	ft_strdel(&buffer);
+	return (ft_newls(line, &s));
+}
