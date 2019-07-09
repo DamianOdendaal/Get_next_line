@@ -1,21 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   tests.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodendaa <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ly <ly@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/02 13:52:13 by dodendaa          #+#    #+#             */
-/*   Updated: 2019/07/09 14:01:05 by dodendaa         ###   ########.fr       */
+/*   Created: 2015/11/23 18:23:01 by lle-blev          #+#    #+#             */
+/*   Updated: 2015/12/17 17:03:22 by ly               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# define BUFF_SIZE 50000
-# include <fcntl.h>
-# include "libft/libft.h"
+#ifndef TESTS_H
+# define TESTS_H
 
-int		get_next_line(const int fd, char **line);
+int			test_hard( void );
 
 #endif

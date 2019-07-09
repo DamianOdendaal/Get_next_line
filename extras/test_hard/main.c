@@ -3,32 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodendaa <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ly <ly@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/09 10:00:57 by dodendaa          #+#    #+#             */
-/*   Updated: 2019/07/09 16:15:33 by dodendaa         ###   ########.fr       */
+/*   Created: 2015/11/23 18:24:57 by lle-blev          #+#    #+#             */
+/*   Updated: 2015/12/17 16:59:31 by ly               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include <fcntl.h>
+#include <stdio.h>
+#include "tests.h"
 
-int		main(int argc, char **argv)
-{
-	int		fd;
-	char	*line;
+int		main( void ) {
 
-	if (argc == 1)
-		fd = 0;
-	else if (argc == 2)
-		fd = open(argv[1], O_RDONLY);
-	else
-		return (2);
-	while (get_next_line(fd, &line) == 1)
-	{
-		ft_putendl(line);
-		free(line);
-	}
-	if (argc == 2)
-		close(fd);
+	unsigned int	count = 0;
+
+	count += test_hard();
+	return 0;
 }
