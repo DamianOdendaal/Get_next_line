@@ -11,13 +11,12 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
-static int		ft_newls(char **line, char **s)
+static int		ft_newlr(char **line, char **s)
 {
 	char	*str;
-	char		*temp;
-	int			len;
+	char	*temp;
+	int	len;
 
 	len = 0;
 	str = (char*)*s;
@@ -26,12 +25,12 @@ static int		ft_newls(char **line, char **s)
 
 	if (str[len] == '\n')
 	{
-			*line = ft_strsub(str, 0 ,len);
-			temp = ft_strdup(&str[len + 1]);
-			*s = temp;
-			if (s[0] == '\0')
-				ft_strdel(&*s);
-			return (1);
+		*line = ft_strsub(str, 0 ,len);
+		temp = ft_strdup(&str[len + 1]);
+		*s = temp;
+		if (s[0] == '\0')
+			ft_strdel(&*s);
+		return (1);
 	}
 	if (str[len] == '\0')
 	{
@@ -50,7 +49,6 @@ static int		ft_bread(const int fd, char **s, char *buff, int *readb)
 	{
 		buff[*readb] = '\0';
 		tvar = ft_strjoin(*s, buff);
-		//ft_strdel(s);
 		*s = tvar;
 		ft_putendl(tvar);
 		if (ft_strchr(buff, '\n'))
@@ -62,9 +60,9 @@ static int		ft_bread(const int fd, char **s, char *buff, int *readb)
 
 int	get_next_line(const int fd, char **line)
 {
-	static char	*s = "";
-	char		*buff;
-	int			readb;
+	static char	*s[1024];
+	char		buff[BUFF_SIZE + 1];
+	int		readb;
 
 	if(!line || read(fd, NULL, 0) == -1)
 		return (-1);
@@ -81,5 +79,5 @@ int	get_next_line(const int fd, char **line)
 		return (0);
 	}
 	ft_strdel(&buff);
-		return (ft_newls(line, &s));
+		return (ft_newlr(line, &s));
 }
