@@ -6,76 +6,37 @@
 /*   By: dodendaa <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/02 14:00:39 by dodendaa          #+#    #+#             */
-/*   Updated: 2019/07/10 13:32:05 by dodendaa         ###   ########.fr       */
+/*   Updated: 2019/07/10 17:01:33 by dodendaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int		ft_newlr(char **line, char **s)
-{
-	char	*str;
-	char	*temp;
-	int	len;
+int        get_next_line(const int fd, char **line)
+ {
+     int            eol;
+     char        *temp;
+     char        buffer[BUFF_SIZE + 1];
+     static char    *sc[2147483647];
+     ssize_t        t;
 
-	len = 0;
-	str = (char*)*s;
-	while ((str[len] != '\n') && (str[len] != '\0'))
-		len++;
-	if (str[len] == '\n')
-	{
-		*line = ft_strsub(str, 0 ,len);
-		temp = ft_strdup(&str[len + 1]);
-		*s = temp;
-		if (s[0] == '\0')
-			ft_strdel(&*s);
-		return (1);
-	}
-	if (str[len] == '\0')
-	{
-		*line = ft_strdup(str);
-		ft_strdel(s);
-		return (1);
-	}
-	return (0);
-}
-
-static int		ft_bread(const int fd, char **s, char *buff, int *readb)
-{
-	char		*tvar;
-	
-	while (*readb > 0)
-	{
-		buff[*readb] = '\0';
-		tvar = ft_strjoin(*s, buff);
-		*s = tvar;
-		if (ft_strchr(buff, '\n'))
-			break ;
-		*readb = read(fd, buff, BUFF_SIZE);
-	}
-	return (*readb);
-}
-
-int	get_next_line(const int fd, char **line)
-{
-	static char		s[1024];
-	char			*buff;
-	int				readb;
-
-	if(!line || read(fd, NULL, 0) == -1)
-		return (-1);
-	buff = ft_strnew(BUFF_SIZE + 1);
-	readb = read(fd, buff, BUFF_SIZE);
-	buff[readb] = '\0';
-	if (readb > 0)
-		ft_bread(fd, s, buff, &readb);
-
-	if (s == NULL)
-	{
-		if (readb == 0)
-			*line[fd] = ft_strdup("");
-		return (0);
-	}
-	ft_strdel(&buff);
-		return (ft_newlr(line[fd], &s));
-}
+     if (fd <= -1 || (!sc[fd] && !(sc[fd] = ft_strnew(1))) || !line)
+         return (-1);
+     while (!ft_strchr(sc[fd], 10) && (t = read(fd, buffer, BUFF_SIZE)) >= 1)
+     {
+         buffer[t] = 0;
+         temp = sc[fd];
+         sc[fd] = ft_strjoin(sc[fd], buffer);
+         ft_strdel(&temp);
+     }
+     if (!*(temp = sc[fd]) || t == -1)
+         return (t == -1 ? -1 : 0);
+     if ((eol = (ft_strchr(sc[fd], 10) > 0)))
+         *line = ft_strsub(sc[fd], 0, ft_strchr(sc[fd], 10) - sc[fd]);
+     else
+         *line = ft_strdup(sc[fd]);
+     sc[fd] = ft_strsub(sc[fd], (unsigned int)(ft_strlen(*line) + eol),
+             (size_t)(ft_strlen(sc[fd]) - (eol + ft_strlen(*line))));
+     ft_strdel(&temp);
+     return (!(!ft_strlen(*line) && !sc[fd]));
+ }
