@@ -6,7 +6,7 @@
 /*   By: dodendaa <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/02 14:00:39 by dodendaa          #+#    #+#             */
-/*   Updated: 2019/07/09 16:15:57 by dodendaa         ###   ########.fr       */
+/*   Updated: 2019/07/10 12:49:26 by dodendaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static int		ft_newlr(char **line, char **s)
 	str = (char*)*s;
 	while ((str[len] != '\n') && (str[len] != '\0'))
 		len++;
-
 	if (str[len] == '\n')
 	{
 		*line = ft_strsub(str, 0 ,len);
@@ -50,7 +49,6 @@ static int		ft_bread(const int fd, char **s, char *buff, int *readb)
 		buff[*readb] = '\0';
 		tvar = ft_strjoin(*s, buff);
 		*s = tvar;
-		ft_putendl(tvar);
 		if (ft_strchr(buff, '\n'))
 			break ;
 		*readb = read(fd, buff, BUFF_SIZE);
@@ -60,8 +58,8 @@ static int		ft_bread(const int fd, char **s, char *buff, int *readb)
 
 int	get_next_line(const int fd, char **line)
 {
-	static char	*s[1024];
-	char		buff[BUFF_SIZE + 1];
+	static char	*s = "";
+	char		*buff;
 	int		readb;
 
 	if(!line || read(fd, NULL, 0) == -1)
