@@ -6,7 +6,7 @@
 /*   By: dodendaa <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/02 14:00:39 by dodendaa          #+#    #+#             */
-/*   Updated: 2019/07/10 12:49:26 by dodendaa         ###   ########.fr       */
+/*   Updated: 2019/07/10 13:32:05 by dodendaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ static int		ft_bread(const int fd, char **s, char *buff, int *readb)
 
 int	get_next_line(const int fd, char **line)
 {
-	static char	*s = "";
-	char		*buff;
-	int		readb;
+	static char		s[1024];
+	char			*buff;
+	int				readb;
 
 	if(!line || read(fd, NULL, 0) == -1)
 		return (-1);
@@ -68,14 +68,14 @@ int	get_next_line(const int fd, char **line)
 	readb = read(fd, buff, BUFF_SIZE);
 	buff[readb] = '\0';
 	if (readb > 0)
-		ft_bread(fd, &s, buff, &readb);
+		ft_bread(fd, s, buff, &readb);
 
 	if (s == NULL)
 	{
 		if (readb == 0)
-			*line = ft_strdup("");
+			*line[fd] = ft_strdup("");
 		return (0);
 	}
 	ft_strdel(&buff);
-		return (ft_newlr(line, &s));
+		return (ft_newlr(line[fd], &s));
 }
