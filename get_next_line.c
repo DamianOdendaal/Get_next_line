@@ -12,31 +12,72 @@
 
 #include "get_next_line.h"
 
-int        get_next_line(const int fd, char **line)
- {
-     int            eol;
-     char        *temp;
-     char        buffer[BUFF_SIZE + 1];
-     static char    *sc[2147483647];
-     ssize_t        t;
+static	char	*ft_joiner(char *stat, char *buff)
+{
+	char	*str;
 
-     if (fd <= -1 || (!sc[fd] && !(sc[fd] = ft_strnew(1))) || !line)
-         return (-1);
-     while (!ft_strchr(sc[fd], 10) && (t = read(fd, buffer, BUFF_SIZE)) >= 1)
-     {
-         buffer[t] = 0;
-         temp = sc[fd];
-         sc[fd] = ft_strjoin(sc[fd], buffer);
-         ft_strdel(&temp);
-     }
-     if (!*(temp = sc[fd]) || t == -1)
-         return (t == -1 ? -1 : 0);
-     if ((eol = (ft_strchr(sc[fd], 10) > 0)))
-         *line = ft_strsub(sc[fd], 0, ft_strchr(sc[fd], 10) - sc[fd]);
-     else
-         *line = ft_strdup(sc[fd]);
-     sc[fd] = ft_strsub(sc[fd], (unsigned int)(ft_strlen(*line) + eol),
-             (size_t)(ft_strlen(sc[fd]) - (eol + ft_strlen(*line))));
-     ft_strdel(&temp);
-     return (!(!ft_strlen(*line) && !sc[fd]));
- }
+	str = ft_strjoin(stat, buff);
+	free(stat);
+	return (str);
+}
+
+static	int		ft_readstr(int fd, char **stat)
+{
+	char	buff[BUFF_SIZE + 1];
+	int		res;
+
+	while ((res = read(fd, buff, BUFF_SIZE)) > 0)
+	{
+		buff[res] = '\0';
+		if (stat[fd] == NULL)
+			stat[fd] = ft_strdup(buff);
+		else
+			stat[fd] = ft_joiner(stat[fd], buff);
+		if (ft_strchr(stat[fd], '\n'))
+			break ;
+	}
+	return (res);
+}
+
+static	int		ft_smover(char **line, char **stat)
+{
+	int		i;
+	char	*temp;
+
+	i = 0;
+	while ((*stat)[i] != '\n' && (*stat)[i] != '\0')
+		i++;
+	if (ft_strchr(*stat, '\n') != NULL)
+	{
+		*(ft_strchr(*stat, '\n')) = '\0';
+		*line = ft_strsub(*stat, 0, i);
+		temp = ft_strdup(ft_strchr(*stat, '\0') + 1);
+		free(*stat);
+		*stat = ft_strdup(temp);
+		free(temp);
+		if ((*stat)[0] == '\0')
+			ft_strdel(stat);
+	}
+	else
+	{
+		*line = ft_strdup(*stat);
+		ft_strdel(stat);
+	}
+	return (1);
+}
+
+int		get_next_line(const int fd, char **line)
+{
+	static char	*stat[1024];
+	int			res;
+
+	res = 0;
+	if (fd < 0 || (read(fd, NULL, 0)) < 0 || !line)
+		return (-1);
+	res = ft_readstr(fd, stat);
+	if (res < 0)
+		return (-1);
+	if (res == 0 && !stat[fd])
+		return (0);
+	return (ft_smover(line, &stat[fd]));
+}
