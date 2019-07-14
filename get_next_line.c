@@ -12,72 +12,55 @@
 
 #include "get_next_line.h"
 
-static	char	*ft_joiner(char *stat, char *buff)
+int		getline(char **hold, char **line)
 {
-	char	*str;
+	char *tmp;
 
-	str = ft_strjoin(stat, buff);
-	free(stat);
-	return (str);
-}
-
-static	int		ft_readstr(int fd, char **stat)
-{
-	char	buff[BUFF_SIZE + 1];
-	int		res;
-
-	while ((res = read(fd, buff, BUFF_SIZE)) > 0)
+	if ((*hold)[0] == '\0')
+		return (0);
+	if (ft_strchr(*hold, '\n') != NULL)
 	{
-		buff[res] = '\0';
-		if (stat[fd] == NULL)
-			stat[fd] = ft_strdup(buff);
-		else
-			stat[fd] = ft_joiner(stat[fd], buff);
-		if (ft_strchr(stat[fd], '\n'))
-			break ;
-	}
-	return (res);
-}
-
-static	int		ft_smover(char **line, char **stat)
-{
-	int		i;
-	char	*temp;
-
-	i = 0;
-	while ((*stat)[i] != '\n' && (*stat)[i] != '\0')
-		i++;
-	if (ft_strchr(*stat, '\n') != NULL)
-	{
-		*(ft_strchr(*stat, '\n')) = '\0';
-		*line = ft_strsub(*stat, 0, i);
-		temp = ft_strdup(ft_strchr(*stat, '\0') + 1);
-		free(*stat);
-		*stat = ft_strdup(temp);
-		free(temp);
-		if ((*stat)[0] == '\0')
-			ft_strdel(stat);
+		*(ft_strchr(*hold, '\n')) = '\0';
+		*line = ft_strdup(*hold);
+		tmp = ft_strdup(ft_strchr(*hold, '\0') + 1);
+		free(*hold);
+		if (tmp)
+		{
+			*hold = ft_strdup(tmp);
+			free(tmp);
+		}
 	}
 	else
 	{
-		*line = ft_strdup(*stat);
-		ft_strdel(stat);
+		*line = ft_strdup(*hold);
+		ft_memdel((void **)hold);
 	}
 	return (1);
 }
 
 int		get_next_line(const int fd, char **line)
 {
+	int			br;
+	char		buffer[BUFF_SIZE + 1];
 	static char	*stat[1024];
-	int			res;
+	char		*tmp;
 
-	res = 0;
-	if (fd < 0 || (read(fd, NULL, 0)) < 0 || !line)
+	if (fd == -1 || read(fd, buffer, 0) < 0 || !line)
 		return (-1);
-	res = ft_readstr(fd, stat);
-	if (res < 0)
-		return (-1);
-	if (res == 0 && !stat[fd])
-		return (0);
-	return (ft_smover(line, &stat[fd]));
+	if (!(stat[fd]))
+		stat[fd] = ft_strnew(0);
+	while (ft_strchr(stat[fd], '\n') == NULL)
+	{
+		br = read(fd, buffer, BUFF_SIZE);
+		buffer[br] = '\0';
+		if (br == 0)
+			break ;
+		tmp = ft_strjoin(stat[fd], buffer);
+		free(stat[fd]);
+		stat[fd] = ft_strdup(tmp);
+		if (!(stat[fd]))
+			stat[fd] = ft_strnew(0);
+		free(tmp);
+	}
+	return (getline(&stat[fd], line));
 }
